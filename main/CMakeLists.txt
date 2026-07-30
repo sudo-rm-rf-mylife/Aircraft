@@ -1,0 +1,16 @@
+# main/CMakeLists.txt
+idf_component_register(
+    SRCS  
+        bsp_adc.c
+        bsp_led.c
+        key.c
+        main.c
+        bsp_lcd.c
+    INCLUDE_DIRS 
+        "."
+    PRIV_REQUIRES 
+        driver
+        esp_adc
+        esp_system
+        hal
+)

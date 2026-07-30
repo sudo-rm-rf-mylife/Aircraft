@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+D:/Embedded/Aircraft project/.build-esp/CMakeFiles/bootloader
+D:/Embedded/Aircraft project/.build-esp/CMakeFiles/bootloader.rule
+D:/Embedded/Aircraft project/.build-esp/CMakeFiles/bootloader-complete.rule
+D:/Embedded/Aircraft project/.build-esp/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+D:/Embedded/Aircraft project/.build-esp/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+D:/Embedded/Aircraft project/.build-esp/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+D:/Embedded/Aircraft project/.build-esp/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+D:/Embedded/Aircraft project/.build-esp/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+D:/Embedded/Aircraft project/.build-esp/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+D:/Embedded/Aircraft project/.build-esp/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule

@@ -1,0 +1,26 @@
+fatal: detected dubious ownership in repository at 'D:/Embedded/Espressif/frameworks/esp-idf-v5.1.6'
+'D:/Embedded/Espressif/frameworks/esp-idf-v5.1.6' is owned by:
+	WZQ/19589 (S-1-5-21-3040578947-458491415-1733420201-1001)
+but the current user is:
+	WZQ/CodexSandboxOffline (S-1-5-21-3040578947-458491415-1733420201-1004)
+To add an exception for this directory, call:
+
+	git config --global --add safe.directory D:/Embedded/Espressif/frameworks/esp-idf-v5.1.6
+Compiler supported targets: xtensa-esp32s3-elf
+
+fatal: detected dubious ownership in repository at 'D:/Embedded/Espressif/frameworks/esp-idf-v5.1.6'
+'D:/Embedded/Espressif/frameworks/esp-idf-v5.1.6' is owned by:
+	WZQ/19589 (S-1-5-21-3040578947-458491415-1733420201-1001)
+but the current user is:
+	WZQ/CodexSandboxOffline (S-1-5-21-3040578947-458491415-1733420201-1004)
+To add an exception for this directory, call:
+
+	git config --global --add safe.directory D:/Embedded/Espressif/frameworks/esp-idf-v5.1.6
+fatal: detected dubious ownership in repository at 'D:/Embedded/Espressif/frameworks/esp-idf-v5.1.6/components/openthread/openthread'
+'D:/Embedded/Espressif/frameworks/esp-idf-v5.1.6/components/openthread/openthread/.git' is owned by:
+	WZQ/19589 (S-1-5-21-3040578947-458491415-1733420201-1001)
+but the current user is:
+	WZQ/CodexSandboxOffline (S-1-5-21-3040578947-458491415-1733420201-1004)
+To add an exception for this directory, call:
+
+	git config --global --add safe.directory D:/Embedded/Espressif/frameworks/esp-idf-v5.1.6/components/openthread/openthread

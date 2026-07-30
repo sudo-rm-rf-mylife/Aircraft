@@ -1,0 +1,1 @@
+@call D:\Embedded\Espressif\frameworks\esp-idf-v5.1.6\export.bat

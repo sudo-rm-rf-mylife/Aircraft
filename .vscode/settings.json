@@ -1,0 +1,22 @@
+{
+  "C_Cpp.intelliSenseEngine": "default",
+  "idf.espIdfPathWin": "D:/Embedded/Espressif/frameworks/esp-idf-v5.1.6/",
+  "idf.pythonInstallPath": "D:\\Embedded\\Espressif\\tools\\idf-python\\3.11.2\\python.exe",
+  "idf.openOcdConfigs": [
+    "board/esp32s3-builtin.cfg"
+  ],
+  "idf.toolsPathWin": "D:\\Embedded\\Espressif",
+  "idf.customExtraVars": {
+    "IDF_TARGET": "esp32s3",
+    "OPENOCD_USB_ADAPTER_LOCATION": "2-2.1"
+  },
+  "clangd.path": "D:\\Embedded\\Espressif\\tools\\esp-clang\\15.0.0-23786128ae\\esp-clang\\bin\\clangd.exe",
+  "clangd.arguments": [
+    "--background-index",
+    "--query-driver=**",
+    "--compile-commands-dir=${workspaceFolder}/.build-esp"
+  ],
+  "idf.portWin": "COM6",
+  "idf.flashType": "UART",
+  "idf.currentSetup": "D:/Embedded/Espressif/frameworks/esp-idf-v5.1.6/"
+}

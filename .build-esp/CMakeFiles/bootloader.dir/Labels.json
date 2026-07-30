@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "D:/Embedded/Aircraft project/.build-esp/CMakeFiles/bootloader"
+		},
+		{
+			"file" : "D:/Embedded/Aircraft project/.build-esp/CMakeFiles/bootloader.rule"
+		},
+		{
+			"file" : "D:/Embedded/Aircraft project/.build-esp/CMakeFiles/bootloader-complete.rule"
+		},
+		{
+			"file" : "D:/Embedded/Aircraft project/.build-esp/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule"
+		},
+		{
+			"file" : "D:/Embedded/Aircraft project/.build-esp/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule"
+		},
+		{
+			"file" : "D:/Embedded/Aircraft project/.build-esp/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule"
+		},
+		{
+			"file" : "D:/Embedded/Aircraft project/.build-esp/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule"
+		},
+		{
+			"file" : "D:/Embedded/Aircraft project/.build-esp/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule"
+		},
+		{
+			"file" : "D:/Embedded/Aircraft project/.build-esp/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule"
+		},
+		{
+			"file" : "D:/Embedded/Aircraft project/.build-esp/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"bootloader"
+		],
+		"name" : "bootloader"
+	}
+}
