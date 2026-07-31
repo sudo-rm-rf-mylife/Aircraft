@@ -16,7 +16,15 @@
 #include "key.h"
 #include "bsp_lcd.h"
 #include "esp_log.h"
-
-
+#include "esp_task_wdt.h"
+#include "wifi_scan.h"
+#include "freertos/projdefs.h"
+#include "key.h"
+#include <stdint.h>
+#include "wifi_station.h"
+#include "nvs_flash.h"
+#include "nvs.h"
+#include "esp_netif.h"
+#include "matrix.h"
 
 #endif

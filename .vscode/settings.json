@@ -1,5 +1,5 @@
 {
-  "C_Cpp.intelliSenseEngine": "default",
+  "C_Cpp.intelliSenseEngine": "disabled",
   "idf.espIdfPathWin": "D:/Embedded/Espressif/frameworks/esp-idf-v5.1.6/",
   "idf.pythonInstallPath": "D:\\Embedded\\Espressif\\tools\\idf-python\\3.11.2\\python.exe",
   "idf.openOcdConfigs": [
@@ -13,8 +13,8 @@
   "clangd.path": "D:\\Embedded\\Espressif\\tools\\esp-clang\\15.0.0-23786128ae\\esp-clang\\bin\\clangd.exe",
   "clangd.arguments": [
     "--background-index",
-    "--query-driver=**",
-    "--compile-commands-dir=${workspaceFolder}/.build-esp"
+    "--query-driver=D:/Embedded/Espressif/tools/xtensa-esp32s3-elf/**/xtensa-esp32s3-elf-*.exe",
+    "--compile-commands-dir=${workspaceFolder}/build"
   ],
   "idf.portWin": "COM6",
   "idf.flashType": "UART",

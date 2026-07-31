@@ -1,7 +1,11 @@
 #include "bsp_lcd.h"
+#include "esp_heap_caps.h"
+#include <stdint.h>
+
  DRAM_ATTR static const lcd_init_cmd_t st_init_cmds[]={
     /* Memory Data Access Control, MX=MV=1, MY=ML=MH=0, RGB=0 */
-    {0x36, {(1<<5)|(1<<6)}, 1},
+    //控制内存读写方向
+    {0x36, {(1<<5)|(0<<6)}, 1},
     /* Interface Pixel Format, 16bits/pixel for RGB/MCU interface */
     {0x3A, {0x55}, 1},
     /* Porch Setting */
@@ -183,7 +187,6 @@ void lcd_init(spi_device_handle_t spi)
     vTaskDelay(100 / portTICK_PERIOD_MS);
     gpio_set_level(PIN_NUM_RST, 1);
     vTaskDelay(100 / portTICK_PERIOD_MS);
-
     //detect LCD type
     uint32_t lcd_id = lcd_get_id(spi);
     int lcd_detected_type = 0;
@@ -228,9 +231,15 @@ void lcd_init(spi_device_handle_t spi)
     }
 
     ///Enable backlight
-    gpio_set_level(PIN_NUM_BCKL, 0);
+    gpio_set_level(PIN_NUM_BCKL, 1);
 }
 
+
+/* LCD resolution */
+#define LCD_WIDTH   320
+#define LCD_HEIGHT  240
+
+spi_device_handle_t lcd_spi;  // SPI handle for LCD operations
 
 /* To send a set of lines we have to send a command, 2 data bytes, another command, 2 more data bytes and another command
  * before sending the line data itself; a total of 6 transactions. (We can't put all of this in just one transaction
@@ -260,6 +269,7 @@ static void send_lines(spi_device_handle_t spi, int ypos, uint16_t *linedata)
             trans[x].length=8*4;
             trans[x].user=(void*)1;
         }
+
         trans[x].flags=SPI_TRANS_USE_TXDATA;
     }
     trans[0].tx_data[0] = 0x2A;             //Column Address Set
@@ -268,6 +278,7 @@ static void send_lines(spi_device_handle_t spi, int ypos, uint16_t *linedata)
     trans[1].tx_data[2] = (320 - 1) >> 8;   //End Col High
     trans[1].tx_data[3] = (320 - 1) & 0xff; //End Col Low
     trans[2].tx_data[0] = 0x2B;             //Page address set
+    /*高字节先发*/
     trans[3].tx_data[0] = ypos >> 8;        //Start page high
     trans[3].tx_data[1] = ypos & 0xff;      //start page low
     trans[3].tx_data[2] = (ypos + PARALLEL_LINES - 1) >> 8;     //end page high
@@ -331,4 +342,104 @@ void Bsp_LCD_Init(void)
     ESP_ERROR_CHECK(ret);
     //Initialize the LCD
     lcd_init(spi);
+    //Save SPI handle for later use (lcd_clear, etc.)
+    lcd_spi = spi;
+    lcd_clear(0xF800);
+}
+void lcd_show_pic(const uint8_t *image)
+{
+    //为 LCD 显示分配 DMA 兼容的内存缓冲区，用于存储要发送到屏幕的图像数据
+    uint16_t *line=heap_caps_malloc(LCD_WIDTH * sizeof(uint16_t)*PARALLEL_LINES, MALLOC_CAP_DMA);
+    assert(line!=NULL);
+    for(int y=0;y<LCD_HEIGHT;y+=PARALLEL_LINES) 
+    {
+          //装填320*16区域像素点颜色数据到line缓存区
+          for(int i=0;i<PARALLEL_LINES*LCD_WIDTH;i++)
+          {
+            //将图像数据从字节数组转换为16位颜色值，并存储在line缓冲区中
+            /*内存是小端存储，又把低字节倒过来了，变成了高字节在前*/
+            line[i]=*image<<8|*(image+1);
+            image+=2;
+          }
+    //将line缓存区中数据发送到显存，进行显示
+    send_lines(lcd_spi, y, line);
+    //等待发送完成
+    send_line_finish(lcd_spi);
+    }
+    free(line);
+}
+void lcd_clear(uint16_t color)
+{
+    // Set column address: 0 ~ LCD_WIDTH-1
+    lcd_cmd(lcd_spi, 0x2A, false);
+    uint8_t col_data[] = {0, 0, (LCD_WIDTH - 1) >> 8, (LCD_WIDTH - 1) & 0xFF};
+    lcd_data(lcd_spi, col_data, 4);
+    // Set page address: 0 ~ LCD_HEIGHT-1
+    lcd_cmd(lcd_spi, 0x2B, false);
+    uint8_t page_data[] = {0, 0, (LCD_HEIGHT - 1) >> 8, (LCD_HEIGHT - 1) & 0xFF};
+    lcd_data(lcd_spi, page_data, 4);
+    // Memory write
+    lcd_cmd(lcd_spi, 0x2C, false);
+    // Send pixel data line by line
+    uint16_t line_buf[LCD_WIDTH];
+    for (int x = 0; x < LCD_WIDTH; x++) {
+        line_buf[x] = color;
+    //line_buf[x] = __builtin_bswap16(color);  
+    }
+    for (int y = 0; y < LCD_HEIGHT; y++) {
+        lcd_data(lcd_spi, (uint8_t *)line_buf, LCD_WIDTH * 2);
+    }
+}
+void lcd_draw_font(uint16_t x,uint16_t y,const unsigned char *font)
+{
+    enum {
+        FONT_WIDTH = 8,
+        FONT_HEIGHT = 16,
+    };
+    const uint16_t foreground = 0xFFFF;
+    const uint16_t background = 0x0000;
+
+    if (font == NULL || x >= LCD_WIDTH || y >= LCD_HEIGHT) {
+        return;
+    }
+
+    uint16_t draw_width = LCD_WIDTH - x;
+    uint16_t draw_height = LCD_HEIGHT - y;
+    /*防越界*/
+    if (draw_width > FONT_WIDTH) {
+        draw_width = FONT_WIDTH;
+    }
+    if (draw_height > FONT_HEIGHT) {
+        draw_height = FONT_HEIGHT;
+    }
+
+    uint8_t pixel_data[FONT_WIDTH * FONT_HEIGHT * 2];
+    size_t offset = 0;
+    for (uint16_t row = 0; row < draw_height; row++) {
+        uint8_t bits = font[row];
+        for (uint16_t col = 0; col < draw_width; col++) {
+            uint16_t color = (bits & (0x80U >> col)) ? foreground : background;
+            pixel_data[offset++] = (uint8_t)(color >> 8);
+            pixel_data[offset++] = (uint8_t)(color & 0xFF);
+        }
+    }
+
+    lcd_cmd(lcd_spi, 0x2A, false);
+    uint16_t x_end = x + draw_width - 1;
+    uint8_t col_data[] = {
+        (uint8_t)(x >> 8), (uint8_t)(x & 0xFF),
+        (uint8_t)(x_end >> 8), (uint8_t)(x_end & 0xFF)
+    };
+    lcd_data(lcd_spi, col_data, sizeof(col_data));
+
+    lcd_cmd(lcd_spi, 0x2B, false);
+    uint16_t y_end = y + draw_height - 1;
+    uint8_t page_data[] = {
+        (uint8_t)(y >> 8), (uint8_t)(y & 0xFF),
+        (uint8_t)(y_end >> 8), (uint8_t)(y_end & 0xFF)
+    };
+    lcd_data(lcd_spi, page_data, sizeof(page_data));
+
+    lcd_cmd(lcd_spi, 0x2C, false);
+    lcd_data(lcd_spi, pixel_data, offset);
 }

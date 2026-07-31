@@ -6,6 +6,10 @@ idf_component_register(
         key.c
         main.c
         bsp_lcd.c
+        image01.c
+        wifi_scan.c
+        wifi_station.c
+        matrix.c
     INCLUDE_DIRS 
         "."
     PRIV_REQUIRES 
@@ -13,4 +17,8 @@ idf_component_register(
         esp_adc
         esp_system
         hal
+        esp_wifi
+        esp_netif
+        esp_event
+        nvs_flash
 )

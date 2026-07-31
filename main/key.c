@@ -14,7 +14,6 @@ static const gpio_num_t key_pins[] = {
     KEY_C5_IO_NUM,
     KEY_FLY_IO_NUM,
 };
-
 void key_init(void)
 {
     gpio_config_t io_conf1 = {
@@ -58,13 +57,12 @@ static uint8_t read_pressed_key(void)
 
     return key_value;
 }
-/*°´¼üÏû¶¶*/
 uint8_t key_scan(void)
 {
-    static bool was_released = true;
-    uint8_t key_value = read_pressed_key();
+    static bool was_released = true;/*????????*/
+    uint8_t key_value = read_pressed_key();/*?????*/
 
-    if (was_released && key_value != 0)
+    if (was_released && key_value != 0)/*?????????????*/
     {
         vTaskDelay(pdMS_TO_TICKS(20));
         key_value = read_pressed_key();
@@ -74,6 +72,6 @@ uint8_t key_scan(void)
             return key_value;
         }
     }
-    was_released = (key_value == 0);
+    was_released = (key_value == 0);/*?????????????*/
     return 0;
 }

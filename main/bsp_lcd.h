@@ -39,6 +39,8 @@ typedef enum {
 } type_lcd_t;
 
 void Bsp_LCD_Init(void);
-
+void lcd_clear(uint16_t color);
+void lcd_show_pic(const uint8_t *pcolor);
+void lcd_draw_font(uint16_t x, uint16_t y, const unsigned char *font);
 
 #endif
