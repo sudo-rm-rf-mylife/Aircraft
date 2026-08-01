@@ -10,6 +10,9 @@ idf_component_register(
         wifi_scan.c
         wifi_station.c
         matrix.c
+        font_library.c
+        smartconfig.c
+        http_client.c
     INCLUDE_DIRS 
         "."
     PRIV_REQUIRES 
@@ -18,7 +21,10 @@ idf_component_register(
         esp_system
         hal
         esp_wifi
+        wpa_supplicant
         esp_netif
         esp_event
         nvs_flash
+    REQUIRES 
+        esp_http_client
 )

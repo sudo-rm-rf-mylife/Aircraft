@@ -13,5 +13,6 @@
 #define DEFAULT_SCAN_LIST_SIZE 10
 
 void wifi_scan(void);
+void nvs_init(void);
 
 #endif

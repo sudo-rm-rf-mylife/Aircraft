@@ -26,5 +26,9 @@
 #include "nvs.h"
 #include "esp_netif.h"
 #include "matrix.h"
+#include "font_library.h"
+#include "smartconfig.h"
+#include "http_client.h"
+
 
 #endif

@@ -1,4 +1,5 @@
 #include"main.h"
+#include "smartconfig.h"
 
 
 TaskHandle_t key_scan_task_handle;
@@ -12,6 +13,7 @@ QueueHandle_t xQueuePower;
 
 extern const unsigned char gImage_image01[153600];
 extern const char matrix[][16];
+extern const unsigned char font_library_8_16[][16];
 
 void key_scan_task(void *para);
 void data_task(void *para); 
@@ -21,14 +23,16 @@ void vPowerCallback(TimerHandle_t xTimer);
 void app_main(void)
 {
     /* Hold the hardware power latch before lengthy peripheral initialization. */
-    Bsp_Power_Init();
-    Bsp_LCD_Init();
-    Bsp_LED_Init();
-    key_init();
-    Bsp_BEEP_Init();
-    bsp_adc1_init();
-
+    // Bsp_Power_Init();
+    // Bsp_LCD_Init();
+    // Bsp_LED_Init();
+    // key_init();
+    // Bsp_BEEP_Init();
+    // bsp_adc1_init();
+    //nvs_init();
     //lcd_show_pic(gImage_image01);
+    smartwifi_init();
+    //http_request_connect();
 
     xQueueLED0 = xQueueCreate(10, sizeof(int));
     xQueueLED1 = xQueueCreate(10, sizeof(int));
@@ -38,19 +42,10 @@ void app_main(void)
     xTaskCreate(key_scan_task, "key_scan", 4096, NULL, 4, &key_scan_task_handle);
     xTaskCreate(data_task, "data", 4096, NULL, 5, &data_task_handle);
     xTaskCreate(Power_task,"Power",4096,NULL,25,&Power_task_handle); 
-    esp_err_t ret = nvs_flash_init();//NV≥ı ºªØ
-    if(ret==ESP_ERR_NVS_NO_FREE_PAGES||ret==ESP_ERR_NVS_NEW_VERSION_FOUND)
-    {
-        ESP_ERROR_CHECK(nvs_flash_erase());
-        ret=nvs_flash_init();
-    }
-    ESP_ERROR_CHECK(ret);
-    for (int i = 0; i <12; i++) 
-    {
-    lcd_draw_font(10 + i * 8, 20,(const unsigned char *)matrix[i]);
-    }
-    //wifi_scan();
-    //wifi_station_init();
+    // for (int i = 0; i <8*16; i++) 
+    // {
+    // lcd_draw_font(10 + i * 8, 20,(const unsigned char *)font_library_8_16[i]);
+    // }
     while (1)
     {
     vTaskDelay(1000 / portTICK_PERIOD_MS);

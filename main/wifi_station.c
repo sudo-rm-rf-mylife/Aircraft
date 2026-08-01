@@ -67,7 +67,6 @@ static void event_handler(void* arg, esp_event_base_t event_base,
         xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
     }
 }
-
 void wifi_init_sta(void)
 {
     //创建一个事件组，返回句柄

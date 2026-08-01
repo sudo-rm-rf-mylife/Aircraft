@@ -390,13 +390,13 @@ void lcd_clear(uint16_t color)
         lcd_data(lcd_spi, (uint8_t *)line_buf, LCD_WIDTH * 2);
     }
 }
-void lcd_draw_font(uint16_t x,uint16_t y,const unsigned char *font)
+void lcd_draw_font(uint16_t x,uint16_t y,const unsigned char *font,uint16_t color)
 {
     enum {
         FONT_WIDTH = 8,
         FONT_HEIGHT = 16,
     };
-    const uint16_t foreground = 0xFFFF;
+    const uint16_t foreground = color;
     const uint16_t background = 0x0000;
 
     if (font == NULL || x >= LCD_WIDTH || y >= LCD_HEIGHT) {
@@ -423,7 +423,7 @@ void lcd_draw_font(uint16_t x,uint16_t y,const unsigned char *font)
             pixel_data[offset++] = (uint8_t)(color & 0xFF);
         }
     }
-
+    /*起始列地址*/
     lcd_cmd(lcd_spi, 0x2A, false);
     uint16_t x_end = x + draw_width - 1;
     uint8_t col_data[] = {
@@ -431,7 +431,7 @@ void lcd_draw_font(uint16_t x,uint16_t y,const unsigned char *font)
         (uint8_t)(x_end >> 8), (uint8_t)(x_end & 0xFF)
     };
     lcd_data(lcd_spi, col_data, sizeof(col_data));
-
+    /*起始行地址*/
     lcd_cmd(lcd_spi, 0x2B, false);
     uint16_t y_end = y + draw_height - 1;
     uint8_t page_data[] = {
@@ -439,7 +439,22 @@ void lcd_draw_font(uint16_t x,uint16_t y,const unsigned char *font)
         (uint8_t)(y_end >> 8), (uint8_t)(y_end & 0xFF)
     };
     lcd_data(lcd_spi, page_data, sizeof(page_data));
-
+    /*写GRAM*/
     lcd_cmd(lcd_spi, 0x2C, false);
     lcd_data(lcd_spi, pixel_data, offset);
 }
+// void LCD_ShowString(uint16_t x,uint16_t y,const char *str,uint16_t color)
+// {
+//     while(*str)
+//     {
+//         if(*str<0x20||*str>0x7E)
+//         {
+//             str++;
+//             continue;
+//         }
+//         lcd_draw_font(x,y,str,)
+
+
+
+//     }
+// }
