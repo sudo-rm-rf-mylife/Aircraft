@@ -1,0 +1,36 @@
+idf_component_register(
+    SRCS
+        "ADC/bsp_adc.c"
+        "KEY/key.c"
+        "LCD/bsp_lcd.c"
+        "LCD/bsp_lcd_base.c"
+        "LED/bsp_led.c"
+        "STM32/bsp_stm32.c"
+        "UART/bsp_uart.c"
+        "WIFI/http_client.c"
+        "WIFI/smartconfig.c"
+        "WIFI/wifi_scan.c"
+        "WIFI/wifi_station.c"
+    INCLUDE_DIRS
+        "ADC"
+        "KEY"
+        "LCD"
+        "LED"
+        "STM32"
+        "UART"
+        "WIFI"
+    REQUIRES
+        RESOURCE
+        driver
+        esp_adc
+        esp_event
+        esp_http_client
+        esp_netif
+        esp_system
+        esp_wifi
+        freertos
+        hal
+        lwip
+        nvs_flash
+        wpa_supplicant
+)

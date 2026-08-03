@@ -25,12 +25,13 @@
 #include "nvs_flash.h"
 #include "nvs.h"
 #include "esp_netif.h"
-#include "matrix.h"
 #include "font_library.h"
 #include "smartconfig.h"
 #include "http_client.h"
 #include "esp_adc/adc_cali.h"
 #include "esp_adc/adc_cali_scheme.h"
+#include "bsp_stm32.h"
+#include "bsp_uart.h"
 
 
 #endif

@@ -1,32 +1,15 @@
-# main/CMakeLists.txt
 idf_component_register(
-    SRCS  
-        bsp_adc.c
-        bsp_led.c
-        key.c
-        main.c
-        bsp_lcd.c
-        image01.c
-        wifi_scan.c
-        wifi_station.c
-        matrix.c
-        font_library.c
-        smartconfig.c
-        http_client.c
-        bsp_lcd_base.c
-    INCLUDE_DIRS 
-        "."
-    PRIV_REQUIRES 
+    SRCS "main.c"
+    INCLUDE_DIRS "."
+    REQUIRES
+        BSP
+        RESOURCE
         driver
         esp_adc
-        esp_system
-        hal
-        esp_wifi
-        wpa_supplicant
-        esp_netif
         esp_event
+        esp_netif
+        esp_wifi
+        freertos
         nvs_flash
-    REQUIRES 
-        esp_http_client
-        esp_adc
+        esp_system
 )
