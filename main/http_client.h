@@ -19,9 +19,9 @@
 #include "esp_log.h"
 
 /* Constants that aren't configurable in menuconfig */
-#define WEB_SERVER "www.baidu.com"
-#define WEB_PORT "80"
-#define WEB_PATH "/"
+#define WEB_SERVER "api.map.baidu.com"
+#define WEB_PORT "443"
+#define WEB_PATH "/weather/v1/?district_id=222405&data_type=all&ak=weR72ykqnWPQuVe6IbM7ZtEVm0P9BxKT"
 
 void http_request_connect(void);
 

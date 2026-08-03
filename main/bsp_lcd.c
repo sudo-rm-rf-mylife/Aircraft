@@ -1,11 +1,14 @@
 #include "bsp_lcd.h"
+#include "font_library.h"
 #include "esp_heap_caps.h"
 #include <stdint.h>
+
+extern const unsigned char ASCII_MODEL_8x16[128][16];
 
  DRAM_ATTR static const lcd_init_cmd_t st_init_cmds[]={
     /* Memory Data Access Control, MX=MV=1, MY=ML=MH=0, RGB=0 */
     //控制内存读写方向
-    {0x36, {(1<<5)|(0<<6)}, 1},
+    {0x36, {0xA0}, 1},
     /* Interface Pixel Format, 16bits/pixel for RGB/MCU interface */
     {0x3A, {0x55}, 1},
     /* Porch Setting */
@@ -66,7 +69,7 @@ DRAM_ATTR static const lcd_init_cmd_t ili_init_cmds[]={
     /* VCOM control 2, VCOMH=VMH-2, VCOML=VML-2 */
     {0xC7, {0xBE}, 1},
     /* Memory access contorl, MX=MY=0, MV=1, ML=0, BGR=1, MH=0 */
-    {0x36, {0x28}, 1},
+    {0x36, {0xA8}, 1},
     /* Pixel format, 16bits/pixel for RGB/MCU interface */
     {0x3A, {0x55}, 1},
     /* Frame rate control, f=fosc, 70Hz fps */
@@ -344,7 +347,7 @@ void Bsp_LCD_Init(void)
     lcd_init(spi);
     //Save SPI handle for later use (lcd_clear, etc.)
     lcd_spi = spi;
-    lcd_clear(0xF800);
+    lcd_clear(0x0000);
 }
 void lcd_show_pic(const uint8_t *image)
 {
@@ -390,6 +393,43 @@ void lcd_clear(uint16_t color)
         lcd_data(lcd_spi, (uint8_t *)line_buf, LCD_WIDTH * 2);
     }
 }
+void lcd_fill_rect(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color)
+{
+    if (x1 > x2 || y1 > y2) {
+        return;
+    }
+    if (x2 >= LCD_WIDTH) {
+        x2 = LCD_WIDTH - 1;
+    }
+    if (y2 >= LCD_HEIGHT) {
+        y2 = LCD_HEIGHT - 1;
+    }
+
+    lcd_cmd(lcd_spi, 0x2A, false);
+    uint8_t col_data[] = {
+        (uint8_t)(x1 >> 8), (uint8_t)(x1 & 0xFF),
+        (uint8_t)(x2 >> 8), (uint8_t)(x2 & 0xFF)
+    };
+    lcd_data(lcd_spi, col_data, 4);
+
+    lcd_cmd(lcd_spi, 0x2B, false);
+    uint8_t page_data[] = {
+        (uint8_t)(y1 >> 8), (uint8_t)(y1 & 0xFF),
+        (uint8_t)(y2 >> 8), (uint8_t)(y2 & 0xFF)
+    };
+    lcd_data(lcd_spi, page_data, 4);
+
+    lcd_cmd(lcd_spi, 0x2C, false);
+    uint32_t width  = x2 - x1 + 1;
+    uint32_t height = y2 - y1 + 1;
+    uint16_t line_buf[LCD_WIDTH];
+    for (uint32_t i = 0; i < width; i++) {
+        line_buf[i] = color;
+    }
+    for (uint32_t y = 0; y < height; y++) {
+        lcd_data(lcd_spi, (uint8_t *)line_buf, width * 2);
+    }
+}
 void lcd_draw_font(uint16_t x,uint16_t y,const unsigned char *font,uint16_t color)
 {
     enum {
@@ -418,7 +458,7 @@ void lcd_draw_font(uint16_t x,uint16_t y,const unsigned char *font,uint16_t colo
     for (uint16_t row = 0; row < draw_height; row++) {
         uint8_t bits = font[row];
         for (uint16_t col = 0; col < draw_width; col++) {
-            uint16_t color = (bits & (0x80U >> col)) ? foreground : background;
+            uint16_t color = (bits & (0x01U << col)) ? foreground : background;
             pixel_data[offset++] = (uint8_t)(color >> 8);
             pixel_data[offset++] = (uint8_t)(color & 0xFF);
         }
@@ -443,18 +483,44 @@ void lcd_draw_font(uint16_t x,uint16_t y,const unsigned char *font,uint16_t colo
     lcd_cmd(lcd_spi, 0x2C, false);
     lcd_data(lcd_spi, pixel_data, offset);
 }
-// void LCD_ShowString(uint16_t x,uint16_t y,const char *str,uint16_t color)
-// {
-//     while(*str)
-//     {
-//         if(*str<0x20||*str>0x7E)
-//         {
-//             str++;
-//             continue;
-//         }
-//         lcd_draw_font(x,y,str,)
 
+void lcd_show_str(uint16_t x, uint16_t y, const char *str, uint16_t color)
+{
+    const uint16_t font_width = 8;
+    const uint16_t font_height = 16;
+    const uint16_t start_x = x;
 
+    if (str == NULL || x >= LCD_WIDTH || y >= LCD_HEIGHT) {
+        return;
+    }
 
-//     }
-// }
+    while (*str != '\0') {
+        unsigned char ch = (unsigned char)*str++;
+
+        if (ch == '\r') {
+            continue;
+        }
+        if (ch == '\n') {
+            x = start_x;
+            y += font_height;
+        } else {
+            if (ch < 0x20U || ch > 0x7EU) {
+                ch = '?';
+            }
+            if ((uint32_t)x + font_width > LCD_WIDTH) {
+                x = start_x;
+                y += font_height;
+            }
+            if ((uint32_t)y + font_height > LCD_HEIGHT) {
+                break;
+            }
+            lcd_draw_font(x, y, ASCII_MODEL_8x16[ch], color);
+            x += font_width;
+            continue;
+        }
+
+        if ((uint32_t)y + font_height > LCD_HEIGHT) {
+            break;
+        }
+    }
+}

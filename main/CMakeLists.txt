@@ -13,6 +13,7 @@ idf_component_register(
         font_library.c
         smartconfig.c
         http_client.c
+        bsp_lcd_base.c
     INCLUDE_DIRS 
         "."
     PRIV_REQUIRES 
@@ -27,4 +28,5 @@ idf_component_register(
         nvs_flash
     REQUIRES 
         esp_http_client
+        esp_adc
 )

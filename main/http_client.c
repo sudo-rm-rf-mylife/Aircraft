@@ -34,7 +34,7 @@ static void http_get_task(void *pvParameters)
     {
         //1.配置客户端参数
         esp_http_client_config_t config={
-            .url="http://"WEB_SERVER":"WEB_PORT WEB_PATH,//构建完整URL
+            .url="https://"WEB_SERVER WEB_PATH,//构建完整URL
             .method=HTTP_METHOD_GET,//发送一个拿数据的请求
             .timeout_ms=5000,
             .event_handler=_http_event_handler,//设置数据接收回调
